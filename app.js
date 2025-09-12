@@ -1,63 +1,56 @@
+// app.js
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var hbs = require('hbs');
+hbs.registerPartials(path.join(__dirname, 'app_server', 'views', 'partials'));
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// Controllers
+var pages = require('./app_server/controllers/pages');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
+// ===== View engine setup =====
+app.set('views', path.join(__dirname, 'app_server', 'views'));
 app.set('view engine', 'hbs');
 
+// ===== Middleware =====
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Serve static assets (CSS, JS, images) from /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Default homepage
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// ===== Redirect .html requests to clean routes =====
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html')) {
+    const clean = req.path.slice(0, -5) || '/';
+    return res.redirect(301, clean);
+  }
+  next();
 });
 
-// Other pages (no .html needed in the URL)
-app.get('/about', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'about.html'));
-});
+// ===== Routes =====
+app.get('/', pages.home);
+app.get('/travel', pages.travel);
+app.get('/rooms', pages.rooms);
+app.get('/meals', pages.meals);
+app.get('/news', pages.news);
+app.get('/about', pages.about);
+app.get('/contact', pages.contact);
 
-app.get('/contact', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'contact.html'));
-});
-
-app.get('/rooms', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'rooms.html'));
-});
-
-app.get('/meals', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'meals.html'));
-});
-
-app.get('/news', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'news.html'));
-});
-
-app.get('/travel', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'travel.html'));
-});
-
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+// ===== Catch 404 and forward to error handler =====
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
+// ===== Error handler =====
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -68,3 +61,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
