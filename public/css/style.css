@@ -543,3 +543,55 @@ hr {
 #connect a.googleplus:hover {
 	background-position: 0 -197px;
 }
+/* Modern background */
+body {
+  background: linear-gradient(to bottom right, #f0f4f8 0%, #e6f0e9 50%, #fdf6e3 100%);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+/* Trip grid */
+.trip-list {
+  list-style: none;
+  padding: 2rem;
+  margin: 0 auto;
+  max-width: 1200px;
+
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+/* Trip card */
+.trip {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trip:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Trip image */
+.trip-thumb {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
