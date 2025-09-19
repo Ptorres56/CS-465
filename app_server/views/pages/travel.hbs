@@ -1,8 +1,22 @@
-
-
 <main class="container">
   <h1>{{title}}</h1>
-  <p>Placeholder content for the Travel page.</p>
-</main>
 
+  {{#if trips}}
+    <ul class="trip-list">
+      {{#each trips}}
+        <li class="trip">
+          <h3>{{title}}</h3>
+          <p>{{summary}}</p>
+          <p>
+            <strong>Code:</strong> {{code}}
+            &nbsp; | &nbsp; <strong>Duration:</strong> {{length}} days
+            &nbsp; | &nbsp; <strong>Price:</strong> ${{price}}
+          </p>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>No trips available.</p>
+  {{/if}}
+</main>
 

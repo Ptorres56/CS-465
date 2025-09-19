@@ -1,0 +1,23 @@
+[
+  {
+    "code": "BCN5",
+    "title": "Barcelona City Break",
+    "length": 5,
+    "price": 1199,
+    "summary": "Explore Gaudí, tapas, and the Mediterranean sun."
+  },
+  {
+    "code": "CUN7",
+    "title": "Cancún Beaches & Ruins",
+    "length": 7,
+    "price": 1499,
+    "summary": "Relax on the Caribbean, plus a trip to Chichén Itzá."
+  },
+  {
+    "code": "KEF5",
+    "title": "Iceland Northern Lights",
+    "length": 5,
+    "price": 1899,
+    "summary": "Chase aurora, soak in lagoons, visit waterfalls."
+  }
+]
