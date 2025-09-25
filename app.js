@@ -1,33 +1,39 @@
 // app.js
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var hbs = require('hbs');
+const createError   = require('http-errors');
+const express       = require('express');
+const path          = require('path');
+const cookieParser  = require('cookie-parser');
+const logger        = require('morgan');
+const hbs           = require('hbs');
+
+// Register Handlebars partials
 hbs.registerPartials(path.join(__dirname, 'app_server', 'views', 'partials'));
 
-// Controllers
-var pages  = require('./app_server/controllers/pages');   // static pages
-var travel = require('./app_server/controllers/travel');  // NEW: dynamic travel
+// ----- Controllers (server-rendered pages) -----
+const pages  = require('./app_server/controllers/pages');
+const travel = require('./app_server/controllers/travel');
 
-var app = express();
+// Create app
+const app = express();
 
-// ===== View engine setup =====
+// ----- Connect to Mongo once on startup -----
+require('./app_api/models/db'); // uses .env MONGODB_URI
+
+// ----- View engine setup -----
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 app.set('view engine', 'hbs');
 
-// ===== Middleware =====
+// ----- Middleware -----
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// Serve static assets (CSS, JS, images) from /public
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ===== Redirect .html requests to clean routes =====
+// Redirect any ".html" URL to the clean route (e.g., /about.html -> /about)
 app.use((req, res, next) => {
   if (req.path.endsWith('.html')) {
     const clean = req.path.slice(0, -5) || '/';
@@ -36,31 +42,28 @@ app.use((req, res, next) => {
   next();
 });
 
-// ===== Routes =====
-app.get('/', pages.home);
-
-// CHANGED: /travel now renders dynamically from trips.json
-app.get('/travel', travel.list);
-
-// Keep the rest on the static pages controller
-app.get('/rooms', pages.rooms);
-app.get('/meals', pages.meals);
-app.get('/news', pages.news);
-app.get('/about', pages.about);
+// ===== Page Routes (server-rendered) =====
+app.get('/',        pages.home);
+app.get('/travel',  travel.list);   // now backed by Mongo via controller
+app.get('/rooms',   pages.rooms);
+app.get('/meals',   pages.meals);
+app.get('/news',    pages.news);
+app.get('/about',   pages.about);
 app.get('/contact', pages.contact);
 
-// NEW: simple API to verify static → dynamic transition
-app.get('/api/trips', travel.apiList);
+// ===== API Routes (Mongo-backed JSON) =====
+const apiRouter = require('./app_api/routes');
+app.use('/api', apiRouter);         // e.g., GET /api/trips, /api/trips/:code
 
-// ===== Catch 404 and forward to error handler =====
-app.use(function (req, res, next) {
+// ===== 404 handler =====
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // ===== Error handler =====
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error   = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
   res.render('error');
 });

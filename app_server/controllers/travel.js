@@ -1,23 +1,32 @@
 // app_server/controllers/travel.js
-const fs = require('fs');
-const path = require('path');
-const dataPath = path.join(__dirname, '..', 'models', 'trips.json');
+const Trip = require('../../app_api/models/trip'); // reuse the Mongoose model
 
-function getTrips() {
-  return JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-}
-
-// Render /travel with dynamic JSON → HBS
-exports.list = (req, res) => {
-  const trips = getTrips();
-  res.render('pages/travel', {
-    title: 'Travel',
-    year: new Date().getFullYear(),
-    trips
-  });
+// Render /travel with live Mongo data
+exports.list = async (req, res) => {
+  try {
+    const trips = await Trip.find().sort({ title: 1 });
+    res.render('pages/travel', {
+      title: 'Travel',
+      year: new Date().getFullYear(),
+      trips
+    });
+  } catch (err) {
+    res.render('pages/travel', {
+      title: 'Travel',
+      year: new Date().getFullYear(),
+      trips: [],
+      error: err.message
+    });
+  }
 };
 
-// Simple API so you can “test” static → dynamic transition
-exports.apiList = (req, res) => {
-  res.json(getTrips());
+// Keep a JSON endpoint to verify quickly
+exports.apiList = async (req, res) => {
+  try {
+    const trips = await Trip.find().sort({ title: 1 });
+    res.json(trips);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching trips', error: err.message });
+  }
 };
+
