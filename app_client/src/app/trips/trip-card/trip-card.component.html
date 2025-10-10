@@ -1,0 +1,14 @@
+<div class="card h-100">
+  <img *ngIf="trip.image" [src]="'/images/' + trip.image" class="card-img-top" alt="{{trip.title}}">
+  <div class="card-body">
+    <h5 class="card-title">{{trip.title}}</h5>
+    <p class="card-text">{{trip.summary}}</p>
+    <div class="small text-muted">
+      Code: {{trip.code}} · Days: {{trip.length}} · Price: ${{trip.price}}
+    </div>
+  </div>
+  <div class="card-footer d-flex gap-2">
+    <button class="btn btn-sm btn-outline-secondary" (click)="edit.emit(trip.code)">Edit</button>
+    <button class="btn btn-sm btn-outline-danger ms-auto" (click)="remove.emit(trip.code)">Delete</button>
+  </div>
+</div>

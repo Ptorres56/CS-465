@@ -1,9 +1,16 @@
 // app_api/routes/index.js
 const express = require('express');
 const router = express.Router();
-const trips = require('../controllers/trips');
+const tripsCtrl = require('../controllers/trips');
 
-router.get('/trips', trips.list);
-router.get('/trips/:code', trips.read);
+// List and read
+router.get('/trips', tripsCtrl.list);
+router.get('/trips/:code', tripsCtrl.read);
+
+// Create, update, delete
+router.post('/trips', tripsCtrl.create);
+router.put('/trips/:code', tripsCtrl.update);
+router.delete('/trips/:code', tripsCtrl.remove);
 
 module.exports = router;
+

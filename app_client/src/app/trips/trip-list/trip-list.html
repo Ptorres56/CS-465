@@ -1,0 +1,27 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Trips</h2>
+  <a class="btn btn-primary" routerLink="/trips/new">Add Trip</a>
+</div>
+
+<div *ngIf="loading">Loading…</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div class="row g-3">
+  <div class="col-md-4" *ngFor="let t of trips">
+    <div class="card h-100">
+      <img *ngIf="t.image" [src]="'/images/' + t.image" class="card-img-top" alt="{{ t.title }}">
+      <div class="card-body">
+        <h5 class="card-title">{{ t.title }}</h5>
+        <p class="card-text">{{ t.summary }}</p>
+        <div class="small text-muted">
+          Code: {{ t.code }} · Days: {{ t.length }} · Price: ${{ t.price }}
+        </div>
+      </div>
+      <div class="card-footer d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/trips', t.code]">Edit</a>
+        <button class="btn btn-sm btn-outline-danger ms-auto" (click)="remove(t.code)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
