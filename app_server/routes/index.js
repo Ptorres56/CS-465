@@ -1,4 +1,5 @@
 // app_server/routes/index.js
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 

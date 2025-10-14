@@ -1,16 +1,24 @@
 // app_api/models/db.js
+require('dotenv').config();
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 
-dotenv.config();
+// Ensure models are registered before seeding
+require('./trip');       // Trip model
+require('./user');       // User model (you created this in models/user.js)
+
+// Admin seeder
+const { ensureAdminSeed } = require('../utils/seedAdmin');
 
 const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/travlr';
-mongoose.set('strictQuery', true);
 
-mongoose
-  .connect(uri)
-  .then(() => console.log('Mongo connected'))
-  .catch(err => console.error('Mongo connection error:', err.message));
+mongoose.connect(uri)
+  .then(async () => {
+    console.log('Mongo connected');
+    await ensureAdminSeed();  // ← seeds admin@travlr.com / Admin#123 once
+  })
+  .catch(err => {
+    console.error('Mongo connection error:', err);
+  });
 
-mongoose.connection.on('disconnected', () => console.warn('Mongo disconnected'));
-mongoose.connection.on('reconnected', () => console.log('Mongo reconnected'));
+// optional: export the connection if you need elsewhere
+module.exports = mongoose.connection;

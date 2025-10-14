@@ -8,13 +8,11 @@ const tripSchema = new mongoose.Schema(
     summary: { type: String, required: true, trim: true },
     length:  { type: Number, required: true, min: 1, validate: Number.isInteger },
     price:   { type: Number, required: true, min: 0 },
-    start:   { type: Date },                 // optional for now
-    image:   { type: String, trim: true },   // used by your hbs file
-    tags:    [{ type: String, trim: true }]  // optional
+    start:   { type: Date },
+    image:   { type: String, trim: true },
+    tags:    [{ type: String, trim: true }]
   },
   { timestamps: true }
 );
-
-tripSchema.index({ code: 1 }, { unique: true });
 
 module.exports = mongoose.model('Trip', tripSchema);
